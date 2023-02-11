@@ -2,6 +2,7 @@ import org.example.Main;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -12,10 +13,11 @@ import java.util.Objects;
 
 public class Bot extends TelegramLongPollingBot {
     boolean firstStart = true;
-    String userText; //текст пользователя
+    String userText = "df"; //текст пользователя
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage = new SendMessage();
+        SendPhoto sendPhoto = new SendPhoto();
         SetButtonRow setButtonRow = new SetButtonRow();
         MakeButtonRow makeButtonRow = new MakeButtonRow();
         LogBot logBot = new LogBot();
@@ -53,10 +55,19 @@ public class Bot extends TelegramLongPollingBot {
                     setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
                     break;
                 }
-                case "Фиксики" : {
+                case "Фиксики" : {sendAud.sendMusic(update,1);break;}
+                case "ДДТ" : {sendAud.sendMusic(update,2);break;}
+                case "7Б" : {sendAud.sendMusic(update,3);break;}
+                case "Кот1" : {sendAud.sendJPG(update,1);break;}
+                case "Кот2" : {sendAud.sendJPG(update,2);break;}
+                case "Поговорим?" : {sendTxt.sendText(update, "не буду я с тобой разговаривать... ");break;}
+                case "reload" : {sendTxt.sendText(update, "не буду я с тобой разговаривать... ");
+                    sendTxt.sendText(update, "Привет! " + update.getMessage().getFrom().getFirstName() +
+                            " " + update.getMessage().getFrom().getLastName() +" " + update.getMessage().getFrom().getUserName()); // ответ бота
                     setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
-                    break;
-                }
+                     break;
+                                 }
+
             }
         }
 
@@ -77,7 +88,7 @@ public class Bot extends TelegramLongPollingBot {
 ////            //logBot.logUser(update); // логирование пользователя
 ////            execute(sendMessage);
 ////            //logBot.logBot(sendMessage); // логирование бота
-////            //tryGetIdFile.getMusicFileId(update,sendMessage); // нужно только для получения ID файла музыки
+//tryGetIdFile.getPhotoFileId(update); // нужно только для получения ID файла музыки
 ////            //sendAud.sendMusic(update,1);
 ////            //for (int i = 1; i < 4; i++)
 ////            //    sendAud.sendMusic(update,i);
