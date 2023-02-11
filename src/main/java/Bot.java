@@ -13,6 +13,7 @@ import java.util.Objects;
 
 public class Bot extends TelegramLongPollingBot {
     boolean firstStart = true;
+    private Map<String,Boolean> mapFirstStart = new HashMap<>();//можно было не выпедриваться с мапами а просто хранить сессию в массиве. если сессии нет то первый вход - если есть то явно не первый
     String userText = "df"; //текст пользователя
     @Override
     public void onUpdateReceived(Update update) {
@@ -24,53 +25,54 @@ public class Bot extends TelegramLongPollingBot {
         SendTxt sendTxt = new SendTxt();
         SendAud sendAud = new SendAud();
         TryGetIdFile tryGetIdFile = new TryGetIdFile();
-        Map <String, SetButtonRow> mapKeyBoard = new HashMap<>();
+
+        System.out.println("ID: " + update.getMessage().getChatId().toString());
+        // Map <String, SetButtonRow> mapKeyBoard = new HashMap<>();
         //mapKeyBoard.put("Посмотрим котиков?",setButtonRow.visibleKeyBoard("Выбери котика: ", update, makeButtonRow.getKeyboard("photo")));
         //mapKeyBoard.put("Послушаем музыку?",setButtonRow.visibleKeyBoard("Выбери музыку: ", update, makeButtonRow.getKeyboard("music")));
-        //System.out.println(firstStart);
+        System.out.println(firstStart);
         //firstStart = true;
 
         logBot.logUser(update);
         //logBot.logBot(sendMessage); // логирование бота
         //System.out.println("Test");
-        if (firstStart) { //если первый раз то приветствие
+        if (!mapFirstStart.containsKey(update.getMessage().getChatId().toString())) { //если первый раз то приветствие
             sendTxt.sendText(update, "Привет! " + update.getMessage().getFrom().getFirstName() +
                     " " + update.getMessage().getFrom().getLastName() +" " + update.getMessage().getFrom().getUserName()); // ответ бота
             setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
-            firstStart = false;
+            //firstStart = false;
+            mapFirstStart.put(update.getMessage().getChatId().toString(),true);
         }
         else {
+            mapFirstStart.put(update.getMessage().getChatId().toString(),false);
             userText = update.getMessage().getText();
             System.out.println("test1 "+userText);
             switch (userText) {
-                case "Посмотрим котиков?" : {
-                    setButtonRow.visibleKeyBoard("Выбери котика: ", update, makeButtonRow.getKeyboard("photo"));
-                    break;
-                }
-                case "Послушаем музыку?" : {
-                    setButtonRow.visibleKeyBoard("Выбери музыку: ", update, makeButtonRow.getKeyboard("music"));
-                    break;
-                }
-                case "Вернуться..." : {
-                    setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
-                    break;
-                }
+                case "Посмотрим котиков?" : {setButtonRow.visibleKeyBoard("Выбери котика: ", update, makeButtonRow.getKeyboard("photo")); break; }
+                case "Послушаем музыку?" : {setButtonRow.visibleKeyBoard("Выбери музыку: ", update, makeButtonRow.getKeyboard("music")); break; }
+                case "Вернуться..." : {setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start")); break; }
                 case "Фиксики" : {sendAud.sendMusic(update,1);break;}
                 case "ДДТ" : {sendAud.sendMusic(update,2);break;}
                 case "7Б" : {sendAud.sendMusic(update,3);break;}
                 case "Кот1" : {sendAud.sendJPG(update,1);break;}
                 case "Кот2" : {sendAud.sendJPG(update,2);break;}
                 case "Поговорим?" : {sendTxt.sendText(update, "не буду я с тобой разговаривать... ");break;}
-                case "reload" : {sendTxt.sendText(update, "не буду я с тобой разговаривать... ");
+                case "reloadsolo" : {sendTxt.sendText(update, "Бот ребутается ... ");
                     sendTxt.sendText(update, "Привет! " + update.getMessage().getFrom().getFirstName() +
                             " " + update.getMessage().getFrom().getLastName() +" " + update.getMessage().getFrom().getUserName()); // ответ бота
                     setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
-                     break;
-                                 }
+                    break;
+                }
+                case "Reloadsolo" : {sendTxt.sendText(update, "Бот ребутается... ");
+                    sendTxt.sendText(update, "Привет! " + update.getMessage().getFrom().getFirstName() +
+                            " " + update.getMessage().getFrom().getLastName() +" " + update.getMessage().getFrom().getUserName()); // ответ бота
+                    setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
+                    break;
+                }
 
             }
         }
-
+        System.out.println(mapFirstStart.toString());
 
 
 
