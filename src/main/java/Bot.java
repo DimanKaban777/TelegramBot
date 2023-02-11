@@ -5,11 +5,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class Bot extends TelegramLongPollingBot {
     boolean firstStart = true;
+    String userText; //текст пользователя
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage = new SendMessage();
@@ -19,18 +22,49 @@ public class Bot extends TelegramLongPollingBot {
         SendTxt sendTxt = new SendTxt();
         SendAud sendAud = new SendAud();
         TryGetIdFile tryGetIdFile = new TryGetIdFile();
+        Map <String, SetButtonRow> mapKeyBoard = new HashMap<>();
+        //mapKeyBoard.put("Посмотрим котиков?",setButtonRow.visibleKeyBoard("Выбери котика: ", update, makeButtonRow.getKeyboard("photo")));
+        //mapKeyBoard.put("Послушаем музыку?",setButtonRow.visibleKeyBoard("Выбери музыку: ", update, makeButtonRow.getKeyboard("music")));
         //System.out.println(firstStart);
         //firstStart = true;
 
         logBot.logUser(update);
         //logBot.logBot(sendMessage); // логирование бота
         //System.out.println("Test");
-        if (firstStart) {
+        if (firstStart) { //если первый раз то приветствие
             sendTxt.sendText(update, "Привет! " + update.getMessage().getFrom().getFirstName() +
                     " " + update.getMessage().getFrom().getLastName() +" " + update.getMessage().getFrom().getUserName()); // ответ бота
             setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
             firstStart = false;
         }
+        else {
+            userText = update.getMessage().getText();
+            System.out.println("test1 "+userText);
+            switch (userText) {
+                case "Посмотрим котиков?" : {
+                    setButtonRow.visibleKeyBoard("Выбери котика: ", update, makeButtonRow.getKeyboard("photo"));
+                    break;
+                }
+                case "Послушаем музыку?" : {
+                    setButtonRow.visibleKeyBoard("Выбери музыку: ", update, makeButtonRow.getKeyboard("music"));
+                    break;
+                }
+                case "Вернуться..." : {
+                    setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
+                    break;
+                }
+                case "Фиксики" : {
+                    setButtonRow.visibleKeyBoard("Что будем делать? ", update, makeButtonRow.getKeyboard("start"));
+                    break;
+                }
+            }
+        }
+
+
+
+
+
+
             //        try {
 //            sendMessage.setChatId(update.getMessage().getChatId().toString());
 //            if (firstStart) {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 //показываем клавиатуру
 public class SetButtonRow {
-    public void visibleKeyBoard (String text,Update update, ArrayList list) {
+    public void visibleKeyBoard (String text, Update update, ArrayList list) {
         //String text передаем сюда текст так как нужно передать вопрос а update изменяется после каждой отправки сообщения боту
         // и дублируются сообщения поэтому нельзя использовать SendTxt для вывода клавиатуры.
         SendMessage sendMessage = new SendMessage();
@@ -23,5 +23,6 @@ public class SetButtonRow {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+        //return null;
     }
 }
